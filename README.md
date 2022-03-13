@@ -1,4 +1,4 @@
-This is a reimplementation of the paper On the Importance of Stereo for Accurate Depth Estimation:
+This is a supervised reimplementation of the paper On the Importance of Stereo for Accurate Depth Estimation:
 An Efficient Semi-Supervised Deep Neural Network Approach using pytorch.
 
 ![Disparity Output](https://github.com/niharika158/Supervised_stereo/blob/main/test_resultL_38.png)
