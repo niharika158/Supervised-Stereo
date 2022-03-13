@@ -10,27 +10,8 @@ from utils import *
 class disparityregression(nn.Module):
     def __init__(self, maxdisp):
         super(disparityregression, self).__init__()
-        #self.conv1=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu1=nn.ELU()
-        #self.conv2=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu2=nn.ELU()
-        #self.conv3=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu3=nn.ELU()
-        #self.conv4=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu4=nn.ELU()
-        #self.conv5=nn.Conv2d(96,1,kernel_size=3,stride=1,padding=1)
-        #self.elu5 = nn.Sigmoid()
+       
         self.disp = torch.Tensor(np.reshape(np.array(range(maxdisp)),[1, maxdisp,1,1])).cuda()
-
-    #def forward(self, x):
-        #out = self.elu1(self.conv1(x))
-        #out = self.elu2(self.conv2(out))
-        #out= self.elu3(self.conv3(out))
-        #out= self.elu4(self.conv4(out))
-        #out= self.elu5(self.conv5(out))
-        #return out
-
-        #self.disp = torch.Tensor(np.reshape(np.array(range(maxdisp)),[1, maxdisp,1,1])).cuda()
 
     def forward(self, x):
         out = torch.sum(x*self.disp.data,1, keepdim=True)
@@ -308,24 +289,6 @@ class SemiSup_Net(nn.Module):
         return nn.Sequential(*layers)
 
 
-    def cost_volume(self,imgl,imgr,xh,xw):
-        xx_list = []
-        pad_opr1 = nn.ZeroPad2d((0, self.maxdisp, 0, 0))
-        xleft = pad_opr1(imgl)
-        for d in range(self.maxdisp):  # maxdisp+1 ?
-            pad_opr2 = nn.ZeroPad2d((d, self.maxdisp - d, 0, 0))
-            xright = pad_opr2(imgr)
-            xx_temp = torch.cat((xleft, xright), 1)
-            xx_list.append(xx_temp)
-        xx = Variable(torch.cat(xx_list, 1))
-        xx = xx.view(1, self.maxdisp, 64, xh, xw+self.maxdisp)
-        xx0=xx.permute(0,2,1,3,4)
-        xx0 = xx0[:, :, :, :, :xw]
-        return xx0
-
-def loss(xx,loss_mul,gt):
-    loss=torch.sum(torch.sqrt(torch.pow(torch.sum(xx.mul(loss_mul),1)-gt,2)+0.00000001)/256/(256+128))
-    return loss
 
 def Semi_Net(height,width,maxdisp):
     return SemiSup_Net(Encoder,ThreeDConv,DeConv,[8,1],height,width,maxdisp)
