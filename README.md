@@ -4,7 +4,8 @@ An Efficient Semi-Supervised Deep Neural Network Approach using pytorch.
 
 
 
-References:
+<References>
+:
 @article{DBLP:journals/corr/abs-1803-09719,
   author    = {Nikolai Smolyanskiy and
                Alexey Kamenev and
