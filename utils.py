@@ -13,41 +13,6 @@ import torch.nn.init as init
 import numpy as np
 from PIL import Image
 
-#class disparityregression(nn.Module):
-#    def __init__(self, maxdisp):
-#        super(disparityregression, self).__init__()
-        #self.conv1=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu1=nn.ELU()
-        #self.conv2=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu2=nn.ELU()
-        #self.conv3=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        #self.elu3=nn.ELU()
-        #self.conv4=nn.Conv2d(96,96,kernel_size=3,stride=1,padding=1)
-        ##self.elu4=nn.ELU()
-        #self.conv5=nn.Conv2d(96,1,kernel_size=3,stride=1,padding=1)
-        #self.elu5 = nn.Sigmoid()
-        #self.disp = torch.Tensor(np.reshape(np.array(range(maxdisp)),[1, maxdisp,1,1])).cuda()
-
-    #def forward(self, x):
-     #   out = self.elu1(self.conv1(x))
-     #   out = self.elu2(self.conv2(out))
-     #   out= self.elu3(self.conv3(out))
-     #   out= self.elu4(self.conv4(out))
-     #   out= self.elu5(self.conv5(out))
-
-        #out = torch.sum(x*self.disp.data,1, keepdim=True)
-
-      #  return out
-
-#class disparityregression(nn.Module):
-#    def __init__(self, maxdisp):
-#        super(disparityregression, self).__init__()
-#        self.disp = torch.Tensor(np.reshape(np.array(range(maxdisp)),[1, maxdisp,1,1])).cuda()
-
-#    def forward(self, x):
-#        out = torch.sum(x*self.disp.data,1, keepdim=True)
-#        return out
-
 
 def depth_read(filename):
 	
