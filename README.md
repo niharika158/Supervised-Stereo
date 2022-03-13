@@ -39,3 +39,23 @@ An Efficient Semi-Supervised Deep Neural Network Approach using pytorch.
   biburl    = {https://dblp.org/rec/journals/corr/GodardAB16.bib},
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
+@article{DBLP:journals/corr/KendallMDHKBB17,
+  author    = {Alex Kendall and
+               Hayk Martirosyan and
+               Saumitro Dasgupta and
+               Peter Henry and
+               Ryan Kennedy and
+               Abraham Bachrach and
+               Adam Bry},
+  title     = {End-to-End Learning of Geometry and Context for Deep Stereo Regression},
+  journal   = {CoRR},
+  volume    = {abs/1703.04309},
+  year      = {2017},
+  url       = {http://arxiv.org/abs/1703.04309},
+  eprinttype = {arXiv},
+  eprint    = {1703.04309},
+  timestamp = {Mon, 13 Aug 2018 16:49:08 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/KendallMDHKBB17.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
