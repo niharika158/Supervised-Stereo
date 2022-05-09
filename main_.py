@@ -23,8 +23,6 @@ from tensorboardX import SummaryWriter
 normal_mean_var = {'mean': [0.485, 0.456, 0.406],
                         'std': [0.229, 0.224, 0.225]}
 
-#normal_mean_var = {'mean': [0.5, 0.5, 0.5],
-#                        'std': [0.5, 0.5, 0.5]}
 
 tsfm=transforms.Compose([transforms.ToTensor(),transforms.Normalize(**normal_mean_var)])
 tsfm2=transforms.Compose([transforms.ToTensor()])
@@ -56,15 +54,6 @@ def adjust_learning_rate(optimizer, epoch):
 
 #train
 def train(epoch_total,loadstate):
-
-
-    #loss_function = MonodepthLoss(
-    #            n=1,
-    #            SSIM_w=0.85,
-    #            disp_gradient_w=0.1, lr_w=1).cuda()
-
-    #optimizer = optim.Adam(net.parameters(), lr=0.0001,betas=(0.9, 0.999))
-    
     dataset = sceneDisp('/data/kumari/amdim/GC_net/data/training/','train',tsfm)
     #loss_fn= F.smooth_l1_loss()
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch, shuffle=True,num_workers=1)
@@ -80,15 +69,11 @@ def train(epoch_total,loadstate):
         checkpoint = torch.load('checkpoint_nomask/ckpt47600.t7')
         net.load_state_dict(checkpoint['net'])
         start_epoch = 0
-        #accu=checkpoint['accur']
-    #print('startepoch:%d accuracy:%f' %(start_epoch,accu))
     global_step = 0
     
     for epoch in range(start_epoch,epoch_total):
         #net.train()
         data_iter = iter(dataloader)
-        #adjust_learning_rate(optimizer,epoch)
-
         print('\nEpoch: %d' % epoch)
         train_loss=0
         acc_total=0
@@ -122,28 +107,16 @@ def train(epoch_total,loadstate):
 
             print('predicted disparity is', probl,mask)
             print('about max main ',torch.max(imageL),torch.min(imageL),torch.max(imageR),torch.min(imageR),torch.max(dispL),torch.min(dispL),torch.max(probl),torch.min(probl))
-            # UNSUPERVISED LOSS
-            #loss = loss_function(disp, [imageL, imageR])
-            #resultL = loss
-          
-            #target = imageL,imageR
+            
             #SUPERVISED LOSS
             #loss = F.smooth_l1_loss(probl[mask].float(),dispL[mask].float(),size_average=True)
             loss = torch.nn.L1Loss()(probl[mask].float(),dispL[mask].float())
             print('loss is ######', loss,train_loss,step)
-            
-
-            
+           
             train_loss+=loss.data
         
             loss.backward()
             optimizer.step()
-
-            #for name,param in net.named_parameters():
-            #    print(name,param.grad)
-            #break
-            
-
             print('=======loss value for every step=======:%f' % (loss.data))
             print('=======average loss value for every step=======:%f' %(train_loss/(global_step+1)))
             #resultL=prob.view(batch,1,h,w)
@@ -188,20 +161,12 @@ def train(epoch_total,loadstate):
                 range_v = np.max(rdisp) - min_v 
                 normalised = (rdisp - min_v) / range_v
                 
-                
-                
-
-                #normalised[~mask]=0
-                
                 normalised = (normalised[0,:,:]*255).astype(np.uint8)
 
                 
                 x_ = Image.fromarray(cv2.applyColorMap(normalised, cv2.COLORMAP_JET))
                 x_.save('result_nomask/train_resultL_%d.png'%global_step)
-                
-       
-
-                
+               
                 dispgt = dispL.squeeze(0).data.cpu().numpy()
 
                 max_disp = np.nanmax(dispgt)
@@ -209,20 +174,15 @@ def train(epoch_total,loadstate):
                 disp_normalized = (dispgt - min_disp) / (max_disp - min_disp)
                     
                 normalised1 = (disp_normalized[0,:,:]*255).astype(np.uint8)
-
-                
+               
                 x_ = Image.fromarray(cv2.applyColorMap(normalised1, cv2.COLORMAP_JET))
                 x_.save('result_nomask/gt_%d.png'%global_step)
                 
                 left = (imageL.squeeze(0).permute(1,2,0).data.cpu().numpy()*255).astype(np.uint8)
 
-
-
                 cv2.imwrite('result_nomask/train_imagel_%d.png'%global_step, left, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
 
-                #img = np.transpose(mask[0, :, :, :].data.cpu().numpy(), (1, 2, 0))*255
-                #cv2.imwrite('result_nomask/mask_%d.png'%step, img, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
-                #vutils.save_image(tensor=img, filename=f'result/train_{step}_pred.jpg')
+ 
 
     fp=open('loss.txt','w')
     for i in range(len(loss_list)):
@@ -267,16 +227,6 @@ def test(loadstate):
 
 
         print('imagel shape  is ',data['imL'].shape)
-        #normdisp = data['normdisp'][:, :, randomH:randomH+h, randomW:randomW+w].cuda()
-
-    #imL.data.resize_(imageL.size()).copy_(imageL)
-    #imR.data.resize_(imageR.size()).copy_(imageR)
-    #dispL.data.resize_(disL.size()).copy_(disL)
-        #loss_mul_list_test = []
-        #for d in range(maxdisp):
-        #    loss_mul_temp = Variable(torch.Tensor(np.ones([1, 1, h, w]) * d)).cuda()
-        #    loss_mul_list_test.append(loss_mul_temp)
-        #loss_mul_test = torch.cat(loss_mul_list_test, 1)
 
         with torch.no_grad():
             dispLL=net(imageL,imageR)
@@ -324,18 +274,6 @@ def test(loadstate):
         x_d = Image.fromarray(cv2.applyColorMap(normalisedd, cv2.COLORMAP_JET))
         x_d.save('result1/gtd_%d.png'%count)
 
-        #dispgt = dispL.squeeze(0).data.cpu().numpy()
-        #max_disp = np.nanmax(dispgt)
-        #min_disp = np.max(dispgt)
-        #disp_normalized = (dispgt - min_disp) / (max_disp - min_disp)
-        #normalised1 = (disp_normalized[0,:,:]*255).astype(np.uint8)
-
-                
-        #x_ = Image.fromarray(cv2.applyColorMap(normalised1, cv2.COLORMAP_JET))
-        #x_.save('result1/gt_%d.png'%count)
-
-
-
         img = np.transpose((imageL[0,:,:,:].data.cpu().numpy()*255).astype(np.uint8),(1,2,0))
         #print('before saving image ',img.shape)
         cv2.imwrite('result1/test_org_img_%d.png'%count, img)
@@ -351,8 +289,6 @@ def test(loadstate):
 def main():
     epoch_total=700
     load_state=False
-
-
     train(epoch_total,load_state)
     #test(load_state)
 
